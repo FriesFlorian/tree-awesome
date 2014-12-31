@@ -88,10 +88,7 @@ static word getData() {
   word h = t / 3600;
   byte m = (t / 60) % 60;
   byte s = t % 60;
-  /*if(s%6 == 0)
-    setPO(1, true);
-  if(s%10 == 0)
-    setPO(1, false);*/
+  
   bfill = ether.tcpOffset();
   bfill.emit_p(PSTR(
     "HTTP/1.0 200 OK\r\n"
@@ -109,6 +106,7 @@ void loop () {
   digitalWrite(6, HIGH);
   digitalWrite(7, HIGH);
 
+  // check what to do according to the current mode
   switch(mode)
   {
     case 0: //normal, do nothing special
@@ -116,14 +114,14 @@ void loop () {
     case 1: //switch (reed sensor, drink)
       if(digitalRead(11) == HIGH)
       {
-        if(switchcounter >= 1000)  setPO(1, true);
+        if(switchcounter >= 1000)  setPO(1, true); // the counter makes sure that the switch was triggered long enough
         else  switchcounter++;
       }
       else  switchcounter = 0;
       
       break;
     case 2: //Light sensor
-      if(analogRead(0) < 10)  setPO(1, true);
+      if(analogRead(0) < 10)  setPO(1, true); // if the level of light is under '10', we power the first power outlet
       else  setPO(1, false);
       break;
     case 3: //reset both power outlets
